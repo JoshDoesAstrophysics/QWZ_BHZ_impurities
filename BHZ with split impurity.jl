@@ -113,13 +113,16 @@ end; nothing
 process_z = Threads.@spawn z_matrix(potential)  # thread task for z_matrix
 
 # ╔═╡ fc86702c-5713-41e5-8f87-14f9f44819ca
-impurity_edge = "right"  # where impurity is connected; top, bottom, right, left 
+impurity_edge = "left"  # where impurity is connected; top, bottom, right, left 
 
 # ╔═╡ a789ab53-a3b1-4483-9731-1d308d339ca0
 impurity_potential = -0.1  # internal potential of impurity
 
-# ╔═╡ da6a644d-5371-455a-86a8-0869ead35213
-impurity_strength = 1  # modifys the strength of the x and y connection
+# ╔═╡ 218f2957-8469-4d5c-b102-3d98e0533f24
+impurity_position = 18  # position of the impurity
+
+# ╔═╡ 6d1f3a95-8259-4ee5-9129-7d1bc627d82d
+impurity_conj = (true, false)
 
 # ╔═╡ c0de8f1e-3a79-42f1-bd15-72e059280edd
 function impurity_matrix(impurity_potential, impurity_position)
@@ -151,12 +154,12 @@ function impurity_matrix(impurity_potential, impurity_position)
 		end
 		set = ⊗(m1*m2', σ)  # |mx, my⟩⟨mx, my| ⊗ σ
 		m = set + set'  # set + h.c.
-		return impurity_strength * (set_z + m)  # returns full impurity connection
+		if impurity_conj[1] == true
+			m = conj(m)
+		end
+		return set_z + m  # returns full impurity connection
 	end
 end; nothing
-
-# ╔═╡ 218f2957-8469-4d5c-b102-3d98e0533f24
-impurity_position = 18  # position of the impurity
 
 # ╔═╡ 6d41fcac-bfab-4a30-be02-7625d892dad3
 process_impurity = Threads.@spawn impurity_matrix(impurity_potential, impurity_position)  # thread task for impurity_matrix
@@ -210,7 +213,10 @@ function copy_impurity_matrix(impurity_position)
 	end
 	set = ⊗(m1*m2', σ')  # |mx, my⟩⟨mx, my| ⊗ σ
 	m = set + set'  # set + h.c.
-	return reverse((impurity_strength .* m)[1:end-2, 1:end-2])  # 
+	if impurity_conj[2] == true
+		m = conj(m)
+	end
+	return reverse(m[1:end-2, 1:end-2])  # 
 end; nothing
 
 # ╔═╡ 053a6f05-abe0-4624-8623-0dfc8f88b3ca
@@ -1920,8 +1926,8 @@ version = "1.4.1+0"
 # ╠═02d5501e-fcfb-4976-94f8-16271411a754
 # ╠═fc86702c-5713-41e5-8f87-14f9f44819ca
 # ╠═a789ab53-a3b1-4483-9731-1d308d339ca0
-# ╠═da6a644d-5371-455a-86a8-0869ead35213
 # ╠═218f2957-8469-4d5c-b102-3d98e0533f24
+# ╠═6d1f3a95-8259-4ee5-9129-7d1bc627d82d
 # ╠═6d41fcac-bfab-4a30-be02-7625d892dad3
 # ╠═1facb105-928c-4987-b232-41ffd20e7b7f
 # ╠═042d14af-8e45-4de2-8da1-4e247cf46dc2

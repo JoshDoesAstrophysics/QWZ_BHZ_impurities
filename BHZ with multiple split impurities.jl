@@ -110,18 +110,6 @@ process_z = Threads.@spawn z_matrix(potential)  # thread task for z_matrix
 # ╔═╡ 4e71287d-d95b-4688-bbe6-97543f3a1a8e
 impurity_edge = tuple("left", "right")  # connection point; top, bottom, right, left 
 
-# ╔═╡ 83b8ad8b-88d2-4a51-acef-2dbc89eac27e
-impurity_potential = -0.1  # internal potential of impurity
-
-# ╔═╡ 2c748062-e304-4681-a4cd-2f8f6fb0fd65
-impurity_strength = 1  # modifys the strength of the x and y connection
-
-# ╔═╡ 306802d7-c482-46d0-b9a7-2d1bb8e40518
-impurity_position = (18, 18)  # position of the impurity 
-
-# ╔═╡ 050cfb00-1ce2-4f6a-b20c-79edd1e44cc4
-impurity_conj = (false, false)  # if impurity should be conjugate pairs
-
 # ╔═╡ 745bf3a1-49a6-4bed-ac47-c67af64d5459
 function impurity_matrix(impurity_potential, impurity_position)
 	m = zeros(ComplexF64, 2 * side, 2 * side)
@@ -151,14 +139,16 @@ function impurity_matrix(impurity_potential, impurity_position)
 		end
 		set = ⊗(m1*m2', σ)  # |mx, my⟩⟨mx, my| ⊗ σ
 		mi = set + set'  # set + h.c.
-		if impurity_conj[i] == false
-			m += impurity_strength * (set_z + mi) # impurity connections
-		else
-			m += conj(impurity_strength * (set_z + mi))
-		end
+		m += set_z + mi
 	end
 	return m
 end; nothing
+
+# ╔═╡ 83b8ad8b-88d2-4a51-acef-2dbc89eac27e
+impurity_potential = -0.1  # internal potential of impurity
+
+# ╔═╡ 306802d7-c482-46d0-b9a7-2d1bb8e40518
+impurity_position = (18, 18)  # position of the impurity 
 
 # ╔═╡ 81256e1b-e58d-4a0c-8d08-2f3a70b01a99
 process_impurity = Threads.@spawn impurity_matrix(impurity_potential, impurity_position)  # thread task for impurity_matrix
@@ -207,11 +197,7 @@ function copy_impurity_matrix(impurity_position)
 			σ = σx
 		end
 		set = ⊗(m1*m2', σ)  # |mx, my⟩⟨mx, my| ⊗ σ
-		if impurity_conj[i] == false
-			m += impurity_strength * (set + set')  # set + h.c.
-		else
-			m += conj(impurity_strength * (set + set'))
-		end
+		m += set + set'
 	end
 	return m[1:end-(2*impurity), 1:end-(2*impurity)]  # impurity connections
 end; nothing
@@ -1920,9 +1906,7 @@ version = "1.4.1+0"
 # ╠═c66a6b84-3d65-4c1c-a360-3e86b99deabf
 # ╠═4e71287d-d95b-4688-bbe6-97543f3a1a8e
 # ╠═83b8ad8b-88d2-4a51-acef-2dbc89eac27e
-# ╠═2c748062-e304-4681-a4cd-2f8f6fb0fd65
 # ╠═306802d7-c482-46d0-b9a7-2d1bb8e40518
-# ╠═050cfb00-1ce2-4f6a-b20c-79edd1e44cc4
 # ╠═81256e1b-e58d-4a0c-8d08-2f3a70b01a99
 # ╠═69de2fc5-5e20-426f-8f2f-b0c611558e33
 # ╠═82635637-e06d-44ae-8a42-7bc27dbfe60e
