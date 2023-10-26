@@ -1,2 +1,2 @@
 # QWZ_BHZ_impurities
-Example Code in support of the paper on simulating QWZ and BHZ lattices with impurities 
+These Pluto Notebooks document our implementation of simulating the QWZ and modified BHZ in the Julia Programming Language. We build the Hamiltioans for the models using 'QBase' and 'OpenQuantumTools' to simplify the code to a state readable as mathematics for Julia novice users.
